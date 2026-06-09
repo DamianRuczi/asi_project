@@ -1,0 +1,9 @@
+# 6. MLOps / Repozytoria
+
+# Opcja B – Automatyzacja MLOps
+# • CI (Continuous Integration):
+# ◦ testy, linting (np. GitHub Actions)
+# • CD (Continuous Deployment):
+# ◦ automatyczne wdrożenia
+# • Continuous Training:
+# ◦ automatyczne ponowne trenowanie modelu
