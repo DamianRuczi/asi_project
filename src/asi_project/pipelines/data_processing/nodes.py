@@ -56,7 +56,7 @@ def engineer_features(df: pd.DataFrame, top_n_countries: int) -> pd.DataFrame:
     before = len(df)
     df = df[df["total_guests"] > 0]
     logger.info(
-        "engineer_features: usunięto %s rezerwacji bez gości", before - len(df)
+        "engineer_features: usunieto %s rezerwacji bez gosci", before - len(df)
     )
     return df
 
