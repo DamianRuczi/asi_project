@@ -1,0 +1,27 @@
+# === Środowisko projektu (wersje przypięte dla odtwarzalności) ===
+
+# Analiza danych i notebook (etap: baseline)
+pandas==2.3.3
+numpy==2.4.4
+scikit-learn==1.8.0
+matplotlib==3.10.8
+seaborn==0.13.2
+jupyter
+
+# Pipeline ML (etap: Kedro) + śledzenie eksperymentów (MLflow)
+kedro==1.4.0
+kedro-datasets[pandas]==9.4.0
+kedro-viz
+pyarrow==24.0.0
+mlflow==3.13.0
+
+# Jakość kodu i testy (CI)
+ruff==0.15.16
+pytest==9.0.3
+
+# === Dodawane w kolejnych etapach ===
+# optuna                               # strojenie hiperparametrów (bayesowskie)
+# xgboost                              # porównanie modeli
+# autogluon                            # AutoML (uruchamiane w Colab)
+# fastapi, uvicorn, prometheus-client  # serwowanie modelu + monitoring
+# dvc                                  # wersjonowanie danych

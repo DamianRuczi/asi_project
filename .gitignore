@@ -1,0 +1,36 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# === Dane (wersjonowane przez DVC w etapie MLOps) ===
+data/**/*.csv
+data/**/*.parquet
+data/**/*.pkl
+data/**/*.json
+!data/**/.gitkeep
+
+# === MLflow / artefakty ===
+mlruns/
+mlartifacts/
+*.db
+
+# === System ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# === Kedro ===
+conf/local/**
+!conf/local/.gitkeep
+conf/**/*credentials*
+.telemetry
+.viz
+*.log
