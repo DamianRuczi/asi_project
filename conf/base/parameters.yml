@@ -1,0 +1,13 @@
+# Parametry projektu — jedna prawda dla całego potoku.
+
+target_column: is_canceled
+test_size: 0.2
+random_state: 42
+top_n_countries: 10
+
+# Hiperparametry modelu bazowego (RandomForest).
+# Wartości zostaną nadpisane najlepszą konfiguracją z Optuny (etap strojenia).
+model:
+  n_estimators: 150
+  max_depth: null
+  min_samples_split: 2
