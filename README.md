@@ -89,11 +89,19 @@ asi_project/
 │   └── 01_baseline.ipynb       # wersja podstawowa: EDA + preprocessing + baseline
 ├── scripts/
 │   └── fetch_data.py           # pobranie surowych danych
+├── app/
+│   ├── main.py                 # FastAPI: /predict, /health, /metrics
+│   └── preprocessing.py        # przygotowanie cech 1:1 z potokiem treningowym
+├── monitoring/
+│   └── prometheus.yml          # konfiguracja scrape'owania metryk API
 ├── src/asi_project/
 │   └── pipelines/
 │       ├── data_processing/    # czyszczenie -> inżynieria cech -> kodowanie
 │       └── data_science/       # split -> trening -> ewaluacja (+ MLflow)
 ├── tests/                      # testy jednostkowe węzłów (pytest)
+├── Dockerfile                  # obraz serwujący (model przez wolumen)
+├── docker-compose.yml          # API + Prometheus
+├── sample_booking.json         # przykładowe żądanie do /predict
 ├── pyproject.toml              # konfiguracja Kedro, ruff, pytest
 ├── requirements.txt
 └── README.md
@@ -137,8 +145,34 @@ pytest          # testy jednostkowe węzłów
 ruff check src tests
 ```
 
-> Kolejne etapy (serwis `docker compose up`) zostaną dodane wraz z rozwojem
-> projektu — patrz roadmapa niżej.
+### 7. API predykcyjne (lokalnie)
+```bash
+uvicorn app.main:app --reload
+```
+Interaktywna dokumentacja z wbudowanym przykładem: http://127.0.0.1:8000/docs
+Przykładowe żądania (PowerShell):
+```powershell
+Invoke-RestMethod http://127.0.0.1:8000/health
+Invoke-RestMethod -Uri http://127.0.0.1:8000/predict -Method Post -ContentType "application/json" -Body (Get-Content sample_booking.json -Raw)
+```
+
+### 8. Produkcja: Docker + Prometheus
+```bash
+kedro run                  # najpierw artefakty modelu (montowane jako wolumen)
+docker compose up --build  # API: http://127.0.0.1:8000/docs · Prometheus: http://127.0.0.1:9090
+```
+Model **nie jest częścią obrazu** — kontener montuje `data/06_models/` jako
+wolumen (podmiana modelu po retreningu bez przebudowy obrazu), a `.dockerignore`
+trzyma kontekst builda z dala od danych i środowisk. Metryki API (liczniki
+predykcji wg klasy, latencja, błędy) zbiera Prometheus (target `api:8000/metrics`).
+
+### 9. Logowanie predykcji i test dryfu danych
+Każde żądanie `/predict` jest dopisywane do `logs/predictions.jsonl`. Prosty
+test dryfu porównuje średnie kluczowych cech (lead_time, adr, total_nights)
+z danymi treningowymi metodą z-score:
+```bash
+python scripts/check_drift.py
+```
 
 ## Wyniki
 
@@ -234,7 +268,7 @@ prostszy do wyjaśnienia, serwowania i monitorowania niż ensemble AutoML.
 - [x] **Porównanie modeli** — RF/XGBoost/LogReg przez CV, wybór po ROC-AUC
 - [x] **Strojenie Optuną** — kontrolowany budżet prób, wynik zapisany w MLflow
 - [x] **AutoGluon** — wykonany notebook, leaderboard i porównanie z Optuną
-- [ ] **Produkcja** — FastAPI + Prometheus + Docker Compose, monitoring + drift
+- [x] **Produkcja** — FastAPI (`/predict`, `/health`, `/docs`) + Prometheus + Docker Compose; logowanie predykcji + test dryfu (z-score)
 - [ ] **MLOps (A)** — DVC + MLflow Model Registry (+ CI: GitHub Actions)
 - [ ] **Dokumentacja** — PDF + diagram architektury
 - [ ] **Prezentacja** — slajdy 10–15 min + demo
