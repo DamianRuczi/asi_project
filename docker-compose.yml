@@ -1,0 +1,21 @@
+services:
+  api:
+    build: .
+    container_name: hotel-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/06_models:/app/models:ro   # model + lista cech (read-only)
+      - ./logs:/app/logs                  # log predykcji (wejście testu dryfu)
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: hotel-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api
+    restart: unless-stopped

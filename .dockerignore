@@ -1,0 +1,15 @@
+# Kontekst builda ograniczamy do minimum — bez danych, środowisk i artefaktów.
+.git
+.venv*
+data/
+mlruns/
+mlartifacts/
+mlflow.db
+notebooks/
+docs/
+logs/
+tests/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
