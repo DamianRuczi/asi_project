@@ -19,9 +19,11 @@ mlflow==3.13.0
 ruff==0.15.16
 pytest==9.0.3
 
+# === Udoskonalanie modelu ===
+optuna==4.2.1                        # strojenie hiperparametrów (bayesowskie)
+xgboost==3.0.0                       # porównanie modeli
+
 # === Dodawane w kolejnych etapach ===
-# optuna                               # strojenie hiperparametrów (bayesowskie)
-# xgboost                              # porównanie modeli
 # autogluon                            # AutoML (uruchamiane w Colab)
 # fastapi, uvicorn, prometheus-client  # serwowanie modelu + monitoring
 # dvc                                  # wersjonowanie danych

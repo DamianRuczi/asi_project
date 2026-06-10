@@ -84,3 +84,6 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # wartości liczbowe w asercjach testowych są czytelne same w sobie
 "tests/**" = ["PLR2004"]
+
+[tool.kedro_telemetry]
+project_id = "902676bdb0254a7a82c3877309c4d7d9"

@@ -5,9 +5,30 @@ test_size: 0.2
 random_state: 42
 top_n_countries: 10
 
-# Hiperparametry modelu bazowego (RandomForest).
-# Wartości zostaną nadpisane najlepszą konfiguracją z Optuny (etap strojenia).
-model:
-  n_estimators: 150
-  max_depth: null
-  min_samples_split: 2
+# Porównanie modeli odbywa się przez CV wyłącznie na zbiorze treningowym.
+# Zbiór testowy pozostaje nietknięty do końcowej ewaluacji najlepszego modelu.
+model_comparison:
+  cv_folds: 3
+  selection_metric: roc_auc
+  logistic_regression:
+    C: 1.0
+    max_iter: 1000
+    solver: lbfgs
+  random_forest:
+    n_estimators: 150
+    max_depth: null
+    min_samples_split: 2
+  xgboost:
+    n_estimators: 300
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    eval_metric: logloss
+
+# Kontrolowany budżet strojenia: Optuna kończy po liczbie prób lub limicie czasu.
+optuna:
+  n_trials: 15
+  timeout_seconds: 600
+  cv_folds: 3
+  selection_metric: roc_auc

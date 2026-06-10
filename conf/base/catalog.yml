@@ -21,6 +21,14 @@ model:
   type: pickle.PickleDataset
   filepath: data/06_models/model.pkl
 
+model_comparison:
+  type: json.JSONDataset
+  filepath: data/08_reporting/model_comparison.json
+
+optuna_results:
+  type: json.JSONDataset
+  filepath: data/08_reporting/optuna_results.json
+
 model_features:
   type: json.JSONDataset
   filepath: data/06_models/model_features.json

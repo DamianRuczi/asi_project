@@ -152,13 +152,68 @@ Inżynieria cech (`total_nights`, `total_guests`, `is_family`, `room_changed`,
 Najsilniejsze predyktory anulowania: `lead_time`, `deposit_type = Non Refund`,
 `adr`, liczba próśb specjalnych, wcześniejsze anulowania.
 
+### Porównanie modeli
+
+Modele są porównywane przez stratyfikowaną 3-krotną walidację krzyżową wyłącznie
+na zbiorze treningowym. Zbiór testowy pozostaje nietknięty do końcowej oceny.
+Metryką wyboru jest ROC-AUC.
+
+| Model | CV Accuracy | CV F1 | CV ROC-AUC |
+|---|---:|---:|---:|
+| Logistic Regression | 0.8175 | 0.7301 | 0.8984 |
+| Random Forest | **0.8853** | **0.8380** | **0.9529** |
+| XGBoost | 0.8672 | 0.8138 | 0.9427 |
+
+Random Forest wygrał porównanie i po treningu na pełnym zbiorze treningowym
+osiągnął na zbiorze testowym `accuracy=0.8901`, `F1=0.8457`,
+`ROC-AUC=0.9561`. Wyniki kandydatów i modelu końcowego są śledzone w MLflow.
+
+### Strojenie Optuną
+
+Optuna stroi zwycięski Random Forest przez 3-krotną walidację krzyżową wyłącznie
+na zbiorze treningowym. Budżet jest ograniczony do 15 prób lub 600 sekund.
+W wykonanym przebiegu limit czasu pozwolił ukończyć 13 prób.
+
+Najlepsze parametry:
+
+```yaml
+n_estimators: 400
+max_depth: null
+min_samples_split: 6
+min_samples_leaf: 1
+max_features: 0.7
+```
+
+| Random Forest | Accuracy | F1 | ROC-AUC |
+|---|---:|---:|---:|
+| Przed strojeniem | **0.8901** | 0.8457 | 0.9561 |
+| Po Optunie | 0.8887 | **0.8459** | **0.9564** |
+
+Strojenie dało niewielką poprawę F1 i ROC-AUC kosztem accuracy. Jest to
+oczekiwany wynik, ponieważ Optuna optymalizowała ROC-AUC, a model bazowy był już
+mocny.
+
+### AutoGluon
+
+Notebook `notebooks/02_autogluon.ipynb` uruchamia AutoML w osobnym środowisku,
+aby jego zależności nie zmieniały wersji używanych przez pipeline Kedro. Trening
+ma limit 300 sekund i używa presetu `medium_quality`.
+
+```powershell
+python -m venv .venv-autogluon
+.venv-autogluon\Scripts\python.exe -m pip install -r requirements-autogluon.txt
+.venv-autogluon\Scripts\jupyter-nbconvert.exe --execute --inplace notebooks/02_autogluon.ipynb
+```
+
 ## Roadmapa
 
 - [x] **Wersja podstawowa** — EDA, preprocessing, model bazowy (RF), ewaluacja
 - [x] **Pipeline Kedro** — `data_processing` + `data_science` (+ pytest, ruff)
 - [x] **Śledzenie eksperymentów** — MLflow (parametry, metryki, artefakt modelu)
 - [x] **Inżynieria cech** — nowe cechy domenowe w potoku (wzrost wszystkich metryk)
-- [ ] **Udoskonalanie** — porównanie modeli (RF/XGBoost/LogReg), Optuna, AutoGluon
+- [x] **Porównanie modeli** — RF/XGBoost/LogReg przez CV, wybór po ROC-AUC
+- [x] **Strojenie Optuną** — kontrolowany budżet prób, wynik zapisany w MLflow
+- [ ] **AutoGluon** — notebook gotowy, oczekuje na wykonanie
 - [ ] **Produkcja** — FastAPI + Prometheus + Docker Compose, monitoring + drift
 - [ ] **MLOps (A)** — DVC + MLflow Model Registry (+ CI: GitHub Actions)
 - [ ] **Dokumentacja** — PDF + diagram architektury
