@@ -205,6 +205,26 @@ python -m venv .venv-autogluon
 .venv-autogluon\Scripts\jupyter-nbconvert.exe --execute --inplace notebooks/02_autogluon.ipynb
 ```
 
+AutoGluon zakończył trening w około minutę. Najlepszym modelem został ensemble
+łączący dostępne modele drzewiaste.
+
+| Model AutoGluon | Test ROC-AUC |
+|---|---:|
+| WeightedEnsemble_L2 | **0.9562** |
+| RandomForestEntr | 0.9561 |
+| RandomForestGini | 0.9551 |
+| ExtraTreesEntr | 0.9520 |
+| ExtraTreesGini | 0.9513 |
+
+| Model końcowy | Accuracy | F1 | ROC-AUC |
+|---|---:|---:|---:|
+| Random Forest po Optunie | 0.8887 | **0.8459** | **0.9564** |
+| AutoGluon WeightedEnsemble | **0.8889** | 0.8438 | 0.9562 |
+
+Wyniki są praktycznie remisowe. Do dalszego wdrożenia wybieramy Random Forest
+po Optunie, ponieważ minimalnie wygrywa w F1 i ROC-AUC, a pojedynczy model jest
+prostszy do wyjaśnienia, serwowania i monitorowania niż ensemble AutoML.
+
 ## Roadmapa
 
 - [x] **Wersja podstawowa** — EDA, preprocessing, model bazowy (RF), ewaluacja
@@ -213,7 +233,7 @@ python -m venv .venv-autogluon
 - [x] **Inżynieria cech** — nowe cechy domenowe w potoku (wzrost wszystkich metryk)
 - [x] **Porównanie modeli** — RF/XGBoost/LogReg przez CV, wybór po ROC-AUC
 - [x] **Strojenie Optuną** — kontrolowany budżet prób, wynik zapisany w MLflow
-- [ ] **AutoGluon** — notebook gotowy, oczekuje na wykonanie
+- [x] **AutoGluon** — wykonany notebook, leaderboard i porównanie z Optuną
 - [ ] **Produkcja** — FastAPI + Prometheus + Docker Compose, monitoring + drift
 - [ ] **MLOps (A)** — DVC + MLflow Model Registry (+ CI: GitHub Actions)
 - [ ] **Dokumentacja** — PDF + diagram architektury

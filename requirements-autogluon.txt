@@ -1,0 +1,5 @@
+# AutoGluon jest izolowany od glownego .venv, poniewaz zarzadza wlasnymi
+# wersjami NumPy, pandas i scikit-learn.
+autogluon.tabular==1.4.0
+ipykernel
+nbconvert
