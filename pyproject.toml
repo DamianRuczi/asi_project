@@ -50,7 +50,7 @@ source_dir = "src"
 
 [tool.pytest.ini_options]
 addopts = "-ra"
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 
 [tool.coverage.report]
 fail_under = 0
