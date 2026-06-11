@@ -1,5 +1,7 @@
 # Predykcja anulowania rezerwacji hotelowych
 
+![CI](https://github.com/DamianRuczi/asi_project/actions/workflows/ci.yml/badge.svg)
+
 Projekt zaliczeniowy **ASI** — kompletny pipeline **ML / MLOps end-to-end**:
 od eksploracji danych, przez potok Kedro i strojenie modelu, po wdrożenie modelu
 jako API z monitoringiem, uruchamiane w Dockerze.
@@ -174,6 +176,26 @@ z danymi treningowymi metodą z-score:
 python scripts/check_drift.py
 ```
 
+### 10. Wersjonowanie danych (DVC)
+Surowy zbiór jest śledzony przez DVC — w gicie zamiast 17 MB danych żyje
+plik-wskaźnik `data/01_raw/hotel_bookings.csv.dvc` (hash md5 + rozmiar).
+```bash
+dvc pull    # pobranie danych z remote'a (lub: python scripts/fetch_data.py)
+dvc status  # czy dane zgadzają się z wersją w gicie
+```
+
+### 11. Rejestr modeli (MLflow Model Registry)
+Najlepszy model jest rejestrowany pod nazwą `hotel-cancellation-rf`
+z aliasem `production` — jedno źródło prawdy o tym, która wersja jest wdrożona:
+```bash
+python scripts/register_model.py
+mlflow ui --backend-store-uri sqlite:///mlflow.db   # zakładka Models
+```
+
+### 12. CI (GitHub Actions)
+Każdy push uruchamia lint (ruff) i testy (pytest) na czystej maszynie —
+testy API pomijają się automatycznie, gdy brak artefaktów modelu.
+
 ## Wyniki
 
 | Etap | Accuracy | F1 | ROC-AUC |
@@ -269,6 +291,6 @@ prostszy do wyjaśnienia, serwowania i monitorowania niż ensemble AutoML.
 - [x] **Strojenie Optuną** — kontrolowany budżet prób, wynik zapisany w MLflow
 - [x] **AutoGluon** — wykonany notebook, leaderboard i porównanie z Optuną
 - [x] **Produkcja** — FastAPI (`/predict`, `/health`, `/docs`) + Prometheus + Docker Compose; logowanie predykcji + test dryfu (z-score)
-- [ ] **MLOps (A)** — DVC + MLflow Model Registry (+ CI: GitHub Actions)
+- [x] **MLOps (A)** — DVC (wersjonowanie danych), MLflow Model Registry (`hotel-cancellation-rf`, alias `production`), CI: GitHub Actions (ruff + pytest)
 - [ ] **Dokumentacja** — PDF + diagram architektury
 - [ ] **Prezentacja** — slajdy 10–15 min + demo
